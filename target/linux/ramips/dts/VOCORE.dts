@@ -1,12 +1,26 @@
 /dts-v1/;
 
+/ {
+	compatible = "VoCore", "ralink,rt5350-soc";
+	model = "VoCore";
+	
+	palmbus@10000000 {
+		uartlite@c00 {
+			status = "okay";
+		};
+	};
+};
 /include/ "rt5350.dtsi"
 
 / {
 	compatible = "VoCore", "ralink,rt5350-soc";
 	model = "VoCore";
+	
 
 	palmbus@10000000 {
+		uart@500 {
+			status = "okay";
+		};
 		gpio1: gpio@660 {
 			status = "okay";
 		};
@@ -61,7 +75,7 @@
 	pinctrl {
 		state_default: pinctrl0 {
 			gpio {
-				ralink,group = "jtag", "uartf", "led";
+				ralink,group = "jtag", "led";
 				ralink,function = "gpio";
 			};
 		};
@@ -97,43 +111,9 @@
 			gpios = <&gpio0 0 0>;
 		};
 
-		/* UARTF */
-		gpio7 {
-			/* UARTF_RTS_N */
-			gpio-export,name = "gpio7";
-			gpio-export,direction_may_change = <1>;
-			gpios = <&gpio0 7 0>;
-		};
-		gpio8 {
-			/* UARTF_TXD */
-			gpio-export,name = "gpio8";
-			gpio-export,direction_may_change = <1>;
-			gpios = <&gpio0 8 0>;
-		};
-		gpio9 {
-			/* UARTF_CTS_N */
-			gpio-export,name = "gpio9";
-			gpio-export,direction_may_change = <1>;
-			gpios = <&gpio0 9 0>;
-		};
-		gpio12 {
-			/* UARTF_DCD_N */
-			gpio-export,name = "gpio12";
-			gpio-export,direction_may_change = <1>;
-			gpios = <&gpio0 12 0>;
-		};
-		gpio13 {
-			/* UARTF_DSR_N */
-			gpio-export,name = "gpio13";
-			gpio-export,direction_may_change = <1>;
-			gpios = <&gpio0 13 0>;
-		};
-		gpio14 {
-			/* UARTF_RIN */
-			gpio-export,name = "gpio14";
-			gpio-export,direction_may_change = <1>;
-			gpios = <&gpio0 14 0>;
-		};
+		/* UARTF used to be here*/
+		
+
 
 		/* JTAG */
 		gpio17 {

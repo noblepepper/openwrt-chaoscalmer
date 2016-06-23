@@ -13,15 +13,25 @@
 	};
 	
 	chosen {
-		bootargs = "console=ttyS0,115200";
+		bootargs = "console=ttyS0,460800";
 	};
 
 
 	pinctrl {
 		state_default: pinctrl0 {
 			gpio {
-				ralink,group = "i2c", "jtag";
+				ralink,group = "i2c";
 				ralink,function = "gpio";
+			};
+			agpio {
+				ralink,group = "agpio";
+				ralink,function = "uart2";
+			};
+		};
+		uart2_pins: uart2 {
+			uart2  {
+				ralink,group = "spis";
+				ralink,function = "pwm";
 			};
 		};
 	};
@@ -62,10 +72,17 @@
 					reg = <0x50000 0xfb0000>;
 				};
 			};
-			uartlite@c00 {
-				clock-frequency = <160000000>;
-			};
 
+		};
+		uartlite@c00 {
+			clock-frequency = <160000000>;
+		};
+		uart1@d00 {
+			status = "okay";
+		};
+		uart2@e00 {
+			pincrtl =  <&uart2_pins>;
+			status = "okay";
 		};
 	};
 };

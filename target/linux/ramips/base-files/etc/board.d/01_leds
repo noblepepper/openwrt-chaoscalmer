@@ -199,7 +199,7 @@ case $board in
 		set_wifi_led "vocore:green:status"
 		;;
 	vocore2)
-		set_status_led "vocore2:fuchsia:status"
+		set_status_led "power" "power" "$board:fuchsia:status" 1
 		;;
 	w306r-v20)
 		set_wifi_led "rt2800pci-phy0::radio"

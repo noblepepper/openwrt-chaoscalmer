@@ -1,0 +1,438 @@
+diff -Naur a/arch/mips/include/asm/mach-ralink/pinmux.h b/arch/mips/include/asm/mach-ralink/pinmux.h
+--- a/arch/mips/include/asm/mach-ralink/pinmux.h	2016-06-23 17:23:51.295316000 -0500
++++ b/arch/mips/include/asm/mach-ralink/pinmux.h	2016-06-21 06:17:23.000000000 -0500
+@@ -9,7 +9,9 @@
+ #ifndef _RT288X_PINMUX_H__
+ #define _RT288X_PINMUX_H__
+ 
+-#define FUNC(name, value, pin_first, pin_count) { name, value, pin_first, pin_count }
++#define FUNC(name, value, pin_first, pin_count) \
++	{ name, value, pin_first, pin_count }
++
+ #define GRP(_name, _func, _mask, _shift) \
+ 	{ .name = _name, .mask = _mask, .shift = _shift, \
+ 	  .func = _func, .gpio = _mask, \
+@@ -31,6 +33,7 @@
+ 	int *pins;
+ 
+ 	int *groups;
++	int **group_names;
+ 	int group_count;
+ 
+ 	int enabled;
+diff -Naur a/arch/mips/ralink/mt7620.c b/arch/mips/ralink/mt7620.c
+--- a/arch/mips/ralink/mt7620.c	2016-06-23 17:23:52.307274000 -0500
++++ b/arch/mips/ralink/mt7620.c	2016-06-23 06:56:08.000000000 -0500
+@@ -46,6 +46,9 @@
+ /* EFUSE bits */
+ #define EFUSE_MT7688		0x100000
+ 
++/* DRAM type bit */
++#define DRAM_TYPE_MT7628_MASK	0x1
++
+ /* does the board have sdram or ddram */
+ static int dram_type;
+ 
+@@ -185,6 +188,41 @@
+ 	FUNC("gpio", 0, 11, 1),
+ };
+ 
++static struct rt2880_pmx_func p4led_kn_grp_mt7628[] = {
++	FUNC("jtag", 3, 30, 1),
++	FUNC("util", 2, 30, 1),
++	FUNC("gpio", 1, 30, 1),
++	FUNC("p4led_kn", 0, 30, 1),
++};
++
++static struct rt2880_pmx_func p3led_kn_grp_mt7628[] = {
++	FUNC("jtag", 3, 31, 1),
++	FUNC("util", 2, 31, 1),
++	FUNC("gpio", 1, 31, 1),
++	FUNC("p3led_kn", 0, 31, 1),
++};
++
++static struct rt2880_pmx_func p2led_kn_grp_mt7628[] = {
++	FUNC("jtag", 3, 32, 1),
++	FUNC("util", 2, 32, 1),
++	FUNC("gpio", 1, 32, 1),
++	FUNC("p2led_kn", 0, 32, 1),
++};
++
++static struct rt2880_pmx_func p1led_kn_grp_mt7628[] = {
++	FUNC("jtag", 3, 33, 1),
++	FUNC("util", 2, 33, 1),
++	FUNC("gpio", 1, 33, 1),
++	FUNC("p1led_kn", 0, 33, 1),
++};
++
++static struct rt2880_pmx_func p0led_kn_grp_mt7628[] = {
++	FUNC("jtag", 3, 34, 1),
++	FUNC("rsvd", 2, 34, 1),
++	FUNC("gpio", 1, 34, 1),
++	FUNC("p0led_kn", 0, 34, 1),
++};
++
+ static struct rt2880_pmx_func wled_kn_grp_mt7628[] = {
+ 	FUNC("rsvd", 3, 35, 1),
+ 	FUNC("rsvd", 2, 35, 1),
+@@ -192,16 +230,70 @@
+ 	FUNC("wled_kn", 0, 35, 1),
+ };
+ 
++static struct rt2880_pmx_func p4led_an_grp_mt7628[] = {
++	FUNC("jtag", 3, 39, 1),
++	FUNC("util", 2, 39, 1),
++	FUNC("gpio", 1, 39, 1),
++	FUNC("p4led_an", 0, 39, 1),
++};
++
++static struct rt2880_pmx_func p3led_an_grp_mt7628[] = {
++	FUNC("jtag", 3, 40, 1),
++	FUNC("util", 2, 40, 1),
++	FUNC("gpio", 1, 40, 1),
++	FUNC("p3led_an", 0, 40, 1),
++};
++
++static struct rt2880_pmx_func p2led_an_grp_mt7628[] = {
++	FUNC("jtag", 3, 41, 1),
++	FUNC("util", 2, 41, 1),
++	FUNC("gpio", 1, 41, 1),
++	FUNC("p2led_an", 0, 41, 1),
++};
++
++static struct rt2880_pmx_func p1led_an_grp_mt7628[] = {
++	FUNC("jtag", 3, 42, 1),
++	FUNC("util", 2, 42, 1),
++	FUNC("gpio", 1, 42, 1),
++	FUNC("p1led_an", 0, 42, 1),
++};
++
++static struct rt2880_pmx_func p0led_an_grp_mt7628[] = {
++	FUNC("jtag", 3, 43, 1),
++	FUNC("rsvd", 2, 43, 1),
++	FUNC("gpio", 1, 43, 1),
++	FUNC("p0led_an", 0, 43, 1),
++};
++
+ static struct rt2880_pmx_func wled_an_grp_mt7628[] = {
+-	FUNC("rsvd", 3, 35, 1),
+-	FUNC("rsvd", 2, 35, 1),
+-	FUNC("gpio", 1, 35, 1),
+-	FUNC("wled_an", 0, 35, 1),
++	FUNC("rsvd", 3, 44, 1),
++	FUNC("rsvd", 2, 44, 1),
++	FUNC("gpio", 1, 44, 1),
++	FUNC("wled_an", 0, 44, 1),
++};
++
++static struct rt2880_pmx_func agpio_grp_mt7628[] = {
++	FUNC("sd", 1, 0, 0 ),
++	FUNC("uart2", 1, 0, 0),
++	FUNC("pwm0", 1, 0, 0),
++	FUNC("pwm1", 1, 0, 0),
++	FUNC("spis", 1, 0, 0),
+ };
+ 
+ #define MT7628_GPIO_MODE_MASK		0x3
++#define MT7628_AGPIO_MODE_MASK		0x1
+ 
++#define MT7628_GPIO_MODE_P4LED_KN	58
++#define MT7628_GPIO_MODE_P3LED_KN	56
++#define MT7628_GPIO_MODE_P2LED_KN	54
++#define MT7628_GPIO_MODE_P1LED_KN	52
++#define MT7628_GPIO_MODE_P0LED_KN	50
+ #define MT7628_GPIO_MODE_WLED_KN	48
++#define MT7628_GPIO_MODE_P4LED_AN	42
++#define MT7628_GPIO_MODE_P3LED_AN	40
++#define MT7628_GPIO_MODE_P2LED_AN	38
++#define MT7628_GPIO_MODE_P1LED_AN	36
++#define MT7628_GPIO_MODE_P0LED_AN	34
+ #define MT7628_GPIO_MODE_WLED_AN	32
+ #define MT7628_GPIO_MODE_PWM1		30
+ #define MT7628_GPIO_MODE_PWM0		28
+@@ -218,28 +310,70 @@
+ #define MT7628_GPIO_MODE_CS1		4
+ #define MT7628_GPIO_MODE_SPIS		2
+ #define MT7628_GPIO_MODE_GPIO		0
++#define MT7628_AGPIO_MODE_DIS		81
+ 
+ static struct rt2880_pmx_group mt7628an_pinmux_data[] = {
+-	GRP_G("pwm1", pwm1_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_PWM1),
+-	GRP_G("pwm0", pwm0_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_PWM0),
+-	GRP_G("uart2", uart2_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_UART2),
+-	GRP_G("uart1", uart1_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_UART1),
+-	GRP_G("i2c", i2c_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_I2C),
++	GRP_G("pwm1", pwm1_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_PWM1),
++	GRP_G("pwm0", pwm0_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_PWM0),
++	GRP_G("uart2", uart2_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_UART2),
++	GRP_G("uart1", uart1_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_UART1),
++	GRP_G("i2c", i2c_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_I2C),
+ 	GRP("refclk", refclk_grp_mt7628, 1, MT7628_GPIO_MODE_REFCLK),
+ 	GRP("perst", perst_grp_mt7628, 1, MT7628_GPIO_MODE_PERST),
+ 	GRP("wdt", wdt_grp_mt7628, 1, MT7628_GPIO_MODE_WDT),
+ 	GRP("spi", spi_grp_mt7628, 1, MT7628_GPIO_MODE_SPI),
+-	GRP_G("sdmode", sd_mode_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_SDMODE),
+-	GRP_G("uart0", uart0_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_UART0),
+-	GRP_G("i2s", i2s_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_I2S),
+-	GRP_G("spi cs1", spi_cs1_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_CS1),
+-	GRP_G("spis", spis_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_SPIS),
+-	GRP_G("gpio", gpio_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_GPIO),
+-	GRP_G("wled_an", wled_an_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_WLED_AN),
+-	GRP_G("wled_kn", wled_kn_grp_mt7628, MT7628_GPIO_MODE_MASK, 1, MT7628_GPIO_MODE_WLED_KN),
++	GRP_G("sdmode", sd_mode_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_SDMODE),
++	GRP_G("uart0", uart0_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_UART0),
++	GRP_G("i2s", i2s_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_I2S),
++	GRP_G("spi cs1", spi_cs1_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_CS1),
++	GRP_G("spis", spis_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_SPIS),
++	GRP_G("gpio", gpio_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_GPIO),
++	GRP_G("wled_an", wled_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_WLED_AN),
++	GRP_G("p0led_an", p0led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P0LED_AN),
++	GRP_G("p1led_an", p1led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P1LED_AN),
++	GRP_G("p2led_an", p2led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P2LED_AN),
++	GRP_G("p3led_an", p3led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P3LED_AN),
++	GRP_G("p4led_an", p4led_an_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P4LED_AN),
++	GRP_G("wled_kn", wled_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_WLED_KN),
++	GRP_G("p0led_kn", p0led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P0LED_KN),
++	GRP_G("p1led_kn", p1led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P1LED_KN),
++	GRP_G("p2led_kn", p2led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P2LED_KN),
++	GRP_G("p3led_kn", p3led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P3LED_KN),
++	GRP_G("p4led_kn", p4led_kn_grp_mt7628, MT7628_GPIO_MODE_MASK,
++				1, MT7628_GPIO_MODE_P4LED_KN),
++	GRP_G("agpio", agpio_grp_mt7628, MT7628_AGPIO_MODE_MASK,
++				1, MT7628_AGPIO_MODE_DIS),
+ 	{ 0 }
+ };
+ 
++static inline int is_mt76x8(void)
++{
++	return ralink_soc == MT762X_SOC_MT7628AN ||
++	       ralink_soc == MT762X_SOC_MT7688;
++}
++
+ static __init u32
+ mt7620_calc_rate(u32 ref_rate, u32 mul, u32 div)
+ {
+@@ -387,6 +521,7 @@
+ 	unsigned long sys_rate;
+ 	unsigned long dram_rate;
+ 	unsigned long periph_rate;
++	unsigned long pcmi2s_rate;
+ 
+ 	xtal_rate = mt7620_get_xtal_rate();
+ 
+@@ -394,16 +529,17 @@
+ #define RINT(x)		((x) / 1000000)
+ #define RFRAC(x)	(((x) / 1000) % 1000)
+ 
+-	if (ralink_soc == MT762X_SOC_MT7628AN || ralink_soc == MT762X_SOC_MT7688) {
++	if (is_mt76x8()) {
+ 		if (xtal_rate == MHZ(40))
+ 			cpu_rate = MHZ(580);
+ 		else
+ 			cpu_rate = MHZ(575);
+ 		dram_rate = sys_rate = cpu_rate / 3;
+ 		periph_rate = MHZ(40);
++		pcmi2s_rate = MHZ(480);
+ 
+-		ralink_clk_add("10000d00.uartlite", periph_rate);
+-		ralink_clk_add("10000e00.uartlite", periph_rate);
++		ralink_clk_add("10000d00.uart1", periph_rate);
++		ralink_clk_add("10000e00.uart2", periph_rate);
+ 	} else {
+ 		cpu_pll_rate = mt7620_get_cpu_pll_rate(xtal_rate);
+ 		pll_rate = mt7620_get_pll_rate(xtal_rate, cpu_pll_rate);
+@@ -412,6 +548,7 @@
+ 		dram_rate = mt7620_get_dram_rate(pll_rate);
+ 		sys_rate = mt7620_get_sys_rate(cpu_rate);
+ 		periph_rate = mt7620_get_periph_rate(xtal_rate);
++		pcmi2s_rate = periph_rate;
+ 
+ 		pr_debug(RFMT("XTAL") RFMT("CPU_PLL") RFMT("PLL"),
+ 			 RINT(xtal_rate), RFRAC(xtal_rate),
+@@ -433,17 +570,20 @@
+ 	ralink_clk_add("cpu", cpu_rate);
+ 	ralink_clk_add("10000100.timer", periph_rate);
+ 	ralink_clk_add("10000120.watchdog", periph_rate);
++	ralink_clk_add("10000900.i2c", periph_rate);
++	ralink_clk_add("10000a00.i2s", pcmi2s_rate);
+ 	ralink_clk_add("10000b00.spi", sys_rate);
++	ralink_clk_add("10000b40.spi", sys_rate);
+ 	ralink_clk_add("10000c00.uartlite", periph_rate);
+- 	ralink_clk_add("10000d00.uart1", periph_rate);
+- 	ralink_clk_add("10000e00.uart2", periph_rate);
++	ralink_clk_add("10000d00.uart1", periph_rate);
++	ralink_clk_add("10000e00.uart2", periph_rate);
+ 	ralink_clk_add("10180000.wmac", xtal_rate);
+ 
+-	if (IS_ENABLED(CONFIG_USB) &&
+-		(ralink_soc == MT762X_SOC_MT7620A || ralink_soc == MT762X_SOC_MT7620N)) {
++	if (IS_ENABLED(CONFIG_USB) && !is_mt76x8()) {
+ 		/*
+-		 * When the CPU goes into sleep mode, the BUS clock will be too low for
+-		 * USB to function properly
++		 * When the CPU goes into sleep mode, the BUS clock will be
++		 * too low for USB to function properly. Adjust the busses
++		 * fractional divider to fix this
+ 		 */
+ 		u32 val = rt_sysc_r32(SYSC_REG_CPU_SYS_CLKCFG);
+ 
+@@ -558,14 +698,14 @@
+ 		(rev & CHIP_REV_ECO_MASK));
+ 
+ 	cfg0 = __raw_readl(sysc + SYSC_REG_SYSTEM_CONFIG0);
+-
+-	if (ralink_soc == MT762X_SOC_MT7628AN || ralink_soc == MT762X_SOC_MT7688)
+-		dram_type = ((cfg0&0x00000001) == 0x00000001)?SYSCFG0_DRAM_TYPE_DDR1_MT7628:SYSCFG0_DRAM_TYPE_DDR2_MT7628;
++	if (is_mt76x8())
++		dram_type = cfg0 & DRAM_TYPE_MT7628_MASK;
+ 	else
+-		dram_type = (cfg0 >> SYSCFG0_DRAM_TYPE_SHIFT) & SYSCFG0_DRAM_TYPE_MASK;
++		dram_type = (cfg0 >> SYSCFG0_DRAM_TYPE_SHIFT) &
++			    SYSCFG0_DRAM_TYPE_MASK;
+ 
+ 	soc_info->mem_base = MT7620_DRAM_BASE;
+-	if (ralink_soc == MT762X_SOC_MT7628AN || ralink_soc == MT762X_SOC_MT7688)
++	if (is_mt76x8())
+ 		mt7628_dram_init(soc_info);
+ 	else
+ 		mt7620_dram_init(soc_info);
+@@ -578,7 +718,7 @@
+ 	pr_info("Digital PMU set to %s control\n",
+ 		(pmu1 & DIG_SW_SEL) ? ("sw") : ("hw"));
+ 
+-	if (ralink_soc == MT762X_SOC_MT7628AN || ralink_soc == MT762X_SOC_MT7688)
++	if (is_mt76x8())
+ 		rt2880_pinmux_data = mt7628an_pinmux_data;
+ 	else
+ 		rt2880_pinmux_data = mt7620a_pinmux_data;
+diff -Naur a/drivers/pinctrl/pinctrl-rt2880.c b/drivers/pinctrl/pinctrl-rt2880.c
+--- a/drivers/pinctrl/pinctrl-rt2880.c	2016-06-23 17:23:51.299316000 -0500
++++ b/drivers/pinctrl/pinctrl-rt2880.c	2016-06-23 08:39:46.997373000 -0500
+@@ -28,6 +28,7 @@
+ 
+ #define SYSC_REG_GPIO_MODE	0x60
+ #define SYSC_REG_GPIO_MODE2	0x64
++#define SYSC_REG_AGPIO_MODE	0x3C
+ 
+ struct rt2880_priv {
+ 	struct device *dev;
+@@ -189,11 +190,8 @@
+ {
+ 	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
+ 
+-	if (p->func[func]->group_count == 1)
+-		*groups = &p->group_names[p->func[func]->groups[0]];
+-	else
+-		*groups = p->group_names;
+-
++	if (p->func[func]->group_count != 0)
++		*groups = p->func[func]->group_names;
+ 	*num_groups = p->func[func]->group_count;
+ 
+ 	return 0;
+@@ -206,8 +204,9 @@
+ 	struct rt2880_priv *p = pinctrl_dev_get_drvdata(pctrldev);
+         u32 mode = 0;
+ 	u32 reg = SYSC_REG_GPIO_MODE;
+-	int i;
++	int i, j;
+ 	int shift;
++	int group_func;
+ 
+ 	/* dont allow double use */
+ 	if (p->groups[group].enabled) {
+@@ -219,9 +218,12 @@
+ 	p->func[func]->enabled = 1;
+ 
+ 	shift = p->groups[group].shift;
+-	if (shift >= 32) {
++	if (shift >= 32 && shift < 64) {
+ 		shift -= 32;
+ 		reg = SYSC_REG_GPIO_MODE2;
++	}else if (shift >= 64) {
++		shift -= 64;
++		reg = SYSC_REG_AGPIO_MODE;
+ 	}
+ 	mode = rt_sysc_r32(reg);
+ 	mode &= ~(p->groups[group].mask << shift);
+@@ -234,9 +236,15 @@
+ 	if (func == 0) {
+ 		mode |= p->groups[group].gpio << shift;
+ 	} else {
+-		for (i = 0; i < p->func[func]->pin_count; i++)
+-			p->gpio[p->func[func]->pins[i]] = 0;
+-		mode |= p->func[func]->value << shift;
++		for (j = 0; j < p->groups[group].func_count; j++){
++			if (strcmp(p->groups[group].func[j].name, p->func[func]->name) == 0){
++				group_func = j;
++				for (i = 0; i < p->func[func]->pin_count; i++)
++					p->gpio[p->func[func]->pins[i]] = 0;
++		
++			}
++		}
++		mode |= p->groups[group].func[group_func].value << shift;
+ 	}
+ 	rt_sysc_w32(mode, reg);
+ 
+@@ -319,12 +327,30 @@
+ 	for (i = 0; i < p->group_count; i++) {
+ 		for (j = 0; j < p->groups[i].func_count; j++) {
+ 			f[c] = &p->groups[i].func[j];
+-			f[c]->groups = devm_kzalloc(p->dev, sizeof(int), GFP_KERNEL);
++			f[c]->groups = devm_kzalloc(p->dev, sizeof(int) * p->group_count, GFP_KERNEL);
++			if (!f[c]->groups)
++				return -1;
++			f[c]->group_names = devm_kzalloc(p->dev, sizeof(char *) * p->group_count, GFP_KERNEL);
++			if (!f[c]->group_names)
++				return -1;
+ 			f[c]->groups[0] = i;
+ 			f[c]->group_count = 1;
+ 			c++;
+ 		}
+ 	}
++	f[0]->group_names = p->group_names;
++	for (c = 1; c < p->func_count; c++) {
++		f[c]->group_count = 0;
++		for (i = 0; i < p->group_count; i++) {
++			for (j = 0; j < p->groups[i].func_count; j++) {
++				if (strcmp(f[c]->name, p->groups[i].func[j].name) == 0) {
++					f[c]->groups[f[c]->group_count] = i;
++					f[c]->group_names[f[c]->group_count] = p->groups[i].name;
++					f[c]->group_count++;
++				}
++			}
++		}
++	}
+ 	return 0;
+ }
+ 
+@@ -447,7 +473,6 @@
+ 		range->pin_base = range->base;
+ 		pinctrl_add_gpio_range(dev, range);
+ 	}
+-
+ 	return 0;
+ }
+ 

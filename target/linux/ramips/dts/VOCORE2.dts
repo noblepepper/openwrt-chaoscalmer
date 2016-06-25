@@ -13,7 +13,7 @@
 	};
 	
 	chosen {
-		bootargs = "console=ttyS0,460800";
+		bootargs = "console=ttyS2,115200";
 	};
 
 
@@ -58,7 +58,6 @@
 				partition@30000 {
 					label = "u-boot-env";
 					reg = <0x30000 0x10000>;
-					read-only;
 				};
 
 				factory: partition@40000 {
@@ -75,7 +74,6 @@
 
 		};
 		uartlite@c00 {
-			clock-frequency = <160000000>;
 		};
 		uart1@d00 {
 			status = "okay";

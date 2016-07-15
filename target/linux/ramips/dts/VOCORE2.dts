@@ -28,12 +28,6 @@
 				ralink,function = "uart2";
 			};
 		};
-		uart2_pins: uart2 {
-			uart2  {
-				ralink,group = "spis";
-				ralink,function = "pwm";
-			};
-		};
 	};
 	
 	palmbus@10000000 {
@@ -73,14 +67,23 @@
 			};
 
 		};
-		uartlite@c00 {
-		};
 		uart1@d00 {
 			status = "okay";
 		};
 		uart2@e00 {
-			pincrtl =  <&uart2_pins>;
 			status = "okay";
 		};
 	};
+
+	i2c-gpio {
+		compatible = "i2c-gpio";
+
+		gpios = <&gpio0 5 0 &gpio0 4 0>;
+		i2c-gpio,delay-us = <5>;
+
+		wm8960@1a {
+			compatible = "wm8960";
+			reg = <0x1a>;
+		};
+        };
 };

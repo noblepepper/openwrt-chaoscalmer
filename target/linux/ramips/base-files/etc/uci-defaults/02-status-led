@@ -1,0 +1,9 @@
+#!/bin/sh
+uci add system led
+uci set system.@led[0].default='0' 
+uci set system.@led[0].sysfs='VoCore2:fuschia:status'
+uci set system.@led[0].trigger='morse'
+uci set system.@led[0].delay='50'
+uci set system.@led[0].message='Another sunny day :P'
+uci commit
+exit 0

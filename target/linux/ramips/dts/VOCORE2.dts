@@ -11,7 +11,16 @@
 		device_type = "memory";
 		reg = <0x0 0x4000000>;
 	};
-	
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		status {
+			label = "VoCore2:fuschia:status";
+			gpios = <&gpio1 12 0>;
+		};
+	};
+
 	chosen {
 		bootargs = "console=ttyS2,115200";
 	};

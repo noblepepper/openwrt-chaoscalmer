@@ -171,7 +171,7 @@ get_status_led() {
 		status_led="vocore:green:status"
 		;;
 	vocore2)
-		status_led="vocore2:fuschia:status"
+		status_led="vocore2:pink:status"
 		;;
 	w306r-v20)
 		status_led="w306r-v20:green:sys"

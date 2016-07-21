@@ -73,6 +73,10 @@
 		uart2@e00 {
 			status = "okay";
 		};
+		gdma@2800 {
+			compatible = "mediatek,mt7628-gdma"
+			status = "okay";
+		}
 	};
 
 	i2c-gpio {

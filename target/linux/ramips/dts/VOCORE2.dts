@@ -9,7 +9,7 @@
 
 	memory@0 {
 		device_type = "memory";
-		reg = <0x0 0x4000000>;
+		reg = <0x0 0x8000000>;
 	};
 
 	gpio-leds {
@@ -35,12 +35,6 @@
 			agpio {
 				ralink,group = "agpio";
 				ralink,function = "uart2";
-			};
-		};
-		uart2_pins: uart2 {
-			uart2  {
-				ralink,group = "spis";
-				ralink,function = "pwm";
 			};
 		};
 	};
@@ -82,14 +76,40 @@
 			};
 
 		};
-		uartlite@c00 {
+		i2s: i2s@a00 {
+			compatible = "mediatek,mt7628-i2s";
+			status = "okay";
 		};
 		uart1@d00 {
 			status = "okay";
 		};
 		uart2@e00 {
-			pincrtl =  <&uart2_pins>;
 			status = "okay";
 		};
+		gdma@2800 {
+			compatible = "mediatek,mt7628-gdma";
+			status = "okay";
+		};
+	};
+
+	i2c-gpio {
+		compatible = "i2c-gpio";
+
+		gpios = <&gpio0 5 0 &gpio0 4 0>;
+		i2c-gpio,delay-us = <5>;
+
+		codec: wm8960@1a {
+			compatible = "wm8960";
+			model = "wm8960";
+			reg = <0x1a>;
+		};
+        };
+
+	audio-card {
+		compatible = "mediatek,mt7628-audio";
+
+		i2s-node = <&i2s>;
+		codec-node = <&codec>;
+		codec-dai-name = "wm8960-hifi";
 	};
 };

@@ -1,4 +1,5 @@
-#
+
+
 # Copyright (C) 2006-2012 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
@@ -73,6 +74,27 @@ define KernelPackage/sound-mt7620/description
 endef
 
 $(eval $(call KernelPackage,sound-mt7620))
+
+
+define KernelPackage/sound-mt7628
+  TITLE:=MT7628 ALSA Driver
+  DEPENDS:=@TARGET_ramips_mt7628 +kmod-sound-soc-core +kmod-regmap 
+  KCONFIG:= \
+        CONFIG_SND_MT7628_SOC_I2S \
+        CONFIG_SND_MT7628_SOC_AUDIO
+  FILES:= \
+        $(LINUX_DIR)/sound/soc/ralink/snd-soc-mt7628-i2s.ko \
+        $(LINUX_DIR)/sound/soc/ralink/snd-soc-mt7628-audio.ko \
+	$(LINUX_DIR)/sound/soc/codecs/snd-soc-wm8960.ko
+  AUTOLOAD:=$(call AutoLoad,90,snd-soc-wm8960 snd-soc-mt7628-i2s snd-soc-mt7628-audio)
+  $(call AddDepends/sound)
+endef
+
+define KernelPackage/sound-mt7628/description
+ Alsa modules for mt7628 audio controller.
+endef
+
+$(eval $(call KernelPackage,sound-mt7628))
 
 
 define KernelPackage/sound-mtk

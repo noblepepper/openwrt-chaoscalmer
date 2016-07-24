@@ -130,8 +130,7 @@
 			interrupt-parent = <&intc>;
 			interrupts = <10>;
 
-			dmas = <&gdma 2>,
-				<&gdma 3>;
+			dmas = <&gdma 2>,<&gdma 3>;
 			dma-names = "tx", "rx";
 
 			status = "disabled";

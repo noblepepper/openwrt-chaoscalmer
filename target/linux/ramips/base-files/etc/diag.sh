@@ -170,9 +170,9 @@ get_status_led() {
 	vocore)
 		status_led="vocore:green:status"
 		;;
-	vocore2)
-		status_led="VoCore2:pink:status"
-		;;
+#	vocore2)
+#		status_led="VoCore2:pink:status"
+#		;;
 	w306r-v20)
 		status_led="w306r-v20:green:sys"
 		;;

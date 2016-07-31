@@ -16,7 +16,7 @@
 		compatible = "gpio-leds";
 
 		status {
-			label = "VoCore2:pink:status";
+			label = "VoCore2:pink:wifi";
 			gpios = <&gpio1 12 0>;
 		};
 	};

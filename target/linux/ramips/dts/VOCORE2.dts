@@ -15,9 +15,13 @@
 	gpio-leds {
 		compatible = "gpio-leds";
 
-		status {
+		wifiled {
 			label = "VoCore2:pink:wifi";
 			gpios = <&gpio1 12 0>;
+		};
+		ethernetled {
+			label = "VoCore2:green:eth0";
+			gpios = <&gpio0 18 0>;
 		};
 	};
 
@@ -25,17 +29,129 @@
 		bootargs = "console=ttyS2,115200";
 	};
 
-
 	pinctrl {
 		state_default: pinctrl0 {
-			gpio {
+			gpio0 {
+				ralink,group = "gpio";
+				ralink,function = "refclk";
+			};
+			i2c {
 				ralink,group = "i2c";
+				ralink,function = "i2c";
+			};
+			i2s {
+				ralink,group = "i2s";
+				ralink,function = "i2s";
+			};
+			pwm1 {
+				ralink,group = "pwm1";
+				ralink,function = "gpio";
+			};
+			uart2 {
+				ralink,group = "uart2";
+				ralink,function = "gpio";
+			};
+			sdmode {
+				ralink,group = "sdmode";
+				ralink,function = "sdxc";
+			};
+			wdt {
+				ralink,group = "wdt";
+				ralink,function = "gpio";
+			};
+			refclk {
+				ralink,group = "refclk";
 				ralink,function = "gpio";
 			};
 			agpio {
 				ralink,group = "agpio";
 				ralink,function = "uart2";
 			};
+			led4 {
+				ralink,group = "p4led_an";
+				ralink,function = "gpio";
+			};
+			led3 {
+				ralink,group = "p3led_an";
+				ralink,function = "gpio";
+			};
+			led2 {
+				ralink,group = "p2led_an";
+				ralink,function = "gpio";
+			};
+			led1 {
+				ralink,group = "p1led_an";
+				ralink,function = "gpio";
+			};
+			led0 {
+				ralink,group = "p0led_an";
+				ralink,function = "gpio";
+			};
+		};
+	};
+
+	gpio-export {
+		compatible = "gpio-export";
+		#size-cells = <0>;
+
+		gpio19 {
+			gpio-export,name = "gpio19";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 19 0>;
+		};
+
+		gpio20 {
+			gpio-export,name = "gpio20";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 20 0>;
+		};
+
+		gpio21 {
+			gpio-export,name = "gpio21";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio0 21 0>;
+		};
+
+		gpio37 {
+			gpio-export,name = "gpio37";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 5 0>;
+		};
+
+		gpio38 {
+			gpio-export,name = "gpio38";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 6 0>;
+		};
+
+		gpio39 {
+			gpio-export,name = "gpio39";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 7 0>;
+		};
+
+		gpio40 {
+			gpio-export,name = "gpio40";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 8 0>;
+		};
+
+		gpio41 {
+			gpio-export,name = "gpio41";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 9 0>;
+		};
+
+		gpio42 {
+			gpio-export,name = "gpio42";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 10 0>;
+		};
+
+		gpio43 {
+			gpio-export,name = "gpio19";
+			gpio-export,direction_may_change = <1>;
+			gpios = <&gpio1 11 0>;
 		};
 	};
 	

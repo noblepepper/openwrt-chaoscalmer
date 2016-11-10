@@ -76,49 +76,36 @@ endef
 $(eval $(call KernelPackage,sound-mt7620))
 
 
-define KernelPackage/sound-mt7628
-  TITLE:=MT7628 ALSA Driver
-  DEPENDS:=@TARGET_ramips_mt7628 +kmod-sound-soc-core +kmod-regmap 
-  KCONFIG:= \
-        CONFIG_SND_MT7628_SOC_I2S \
-        CONFIG_SND_MT7628_SOC_AUDIO
-  FILES:= \
-        $(LINUX_DIR)/sound/soc/ralink/snd-soc-mt7628-i2s.ko \
-        $(LINUX_DIR)/sound/soc/ralink/snd-soc-mt7628-audio.ko \
-	$(LINUX_DIR)/sound/soc/codecs/snd-soc-wm8960.ko
-  AUTOLOAD:=$(call AutoLoad,90,snd-soc-wm8960 snd-soc-mt7628-i2s snd-soc-mt7628-audio)
+define KernelPackage/sound-soc-mt7628
+  DEPENDS:=@TARGET_ramips_mt7628||@TARGET_ramips_mt7688 +kmod-i2c-core +kmod-snd-soc-core 
+  TITLE:=Support for i2s alsa sound on Mediatek mt7628/mt7688
+  KCONFIG:=CONFIG_SND_MT7628_SOC_I2S \
+	  CONFIG_SND_MT7628_SOC_AUDIO
+  FILES:=\
+	$(LINUX_DIR)/sound/soc/ralink/snd-soc-mt7628-audio.ko \
+	$(LINUX_DIR)/sound/soc/ralink/snd-soc-mt7628-i2s.ko
+  AUTOLOAD:=$(call AutoLoad,57,snd-soc-mt7628-audio snd-soc-mt7628-i2s)
   $(call AddDepends/sound)
 endef
 
-define KernelPackage/sound-mt7628/description
- Alsa modules for mt7628 audio controller.
+define KernelPackage/sound-soc-mt7628/description
+ Support for i2s codecs on Mediatek mt7628/mt7688 based boards
 endef
 
-$(eval $(call KernelPackage,sound-mt7628))
+$(eval $(call KernelPackage,sound-soc-mt7628))
 
-
-define KernelPackage/sound-mtk
-  TITLE:=Mediatek I2S Alsa Driver
-  DEPENDS:= +kmod-sound-soc-core +kmod-regmap +kmod-i2c-ralink @(TARGET_ramips_mt7628||TARGET_ramips_mt7688||TARGET_ramips_mt7620)
-  KCONFIG:= \
-	CONFIG_SND_MT76XX_SOC \
-	CONFIG_SND_MT76XX_I2S \
-	CONFIG_SND_MT76XX_PCM \
-	CONFIG_SND_SOC_WM8960
-  FILES:= \
-	$(LINUX_DIR)/sound/soc/mtk/ralink_gdma.ko \
-	$(LINUX_DIR)/sound/soc/mtk/snd-soc-mt76xx-i2s-ctl.ko \
-	$(LINUX_DIR)/sound/soc/mtk/snd-soc-mt76xx-i2s.ko \
-	$(LINUX_DIR)/sound/soc/mtk/snd-soc-mt76xx-pcm.ko \
-	$(LINUX_DIR)/sound/soc/mtk/snd-soc-mt76xx-machine.ko \
-	$(LINUX_DIR)/sound/soc/mtk/i2c_wm8960.ko \
-	$(LINUX_DIR)/sound/soc/codecs/snd-soc-wm8960.ko
-  AUTOLOAD:=$(call AutoLoad,90,ralink_gdma snd-soc-wm8960 i2c_wm8960 snd-soc-mt76xx-i2s-ctl snd-soc-mt76xx-i2s snd-soc-mt76xx-pcm snd-soc-mt76xx-machine)
+define KernelPackage/sound-soc-codec8388
+  DEPENDS:=@TARGET_ramips_mt7628||@TARGET_ramips_mt7688 
+  TITLE:=Support for es8388 codec
+  KCONFIG:=CONFIG_SND_SOC_ES8388
+  FILES:=\
+	$(LINUX_DIR)/sound/soc/codecs/snd-soc-es8388.ko
+  AUTOLOAD:=$(call AutoLoad,57,es8388)
   $(call AddDepends/sound)
 endef
 
-define KernelPackage/sound-mtk/description
- Alsa modules for ralink i2s controller.
+define KernelPackage/sound-soc-mt7628/description
+ Support for es8388 i2s codec 
 endef
 
-$(eval $(call KernelPackage,sound-mtk))
+$(eval $(call KernelPackage,sound-soc-codec8388))

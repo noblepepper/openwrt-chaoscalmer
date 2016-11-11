@@ -77,7 +77,7 @@ $(eval $(call KernelPackage,sound-mt7620))
 
 
 define KernelPackage/sound-soc-mt7628
-  DEPENDS:=@TARGET_ramips_mt7628||@TARGET_ramips_mt7688 +kmod-i2c-core +kmod-snd-soc-core 
+  DEPENDS:=@TARGET_ramips_mt7628||@TARGET_ramips_mt7688 +kmod-regmap +kmod-sound-soc-core
   TITLE:=Support for i2s alsa sound on Mediatek mt7628/mt7688
   KCONFIG:=CONFIG_SND_MT7628_SOC_I2S \
 	  CONFIG_SND_MT7628_SOC_AUDIO
@@ -94,13 +94,13 @@ endef
 
 $(eval $(call KernelPackage,sound-soc-mt7628))
 
-define KernelPackage/sound-soc-codec8388
-  DEPENDS:=@TARGET_ramips_mt7628||@TARGET_ramips_mt7688 
+define KernelPackage/sound-soc-es8388
+  DEPENDS:=@TARGET_ramips_mt7628||@TARGET_ramips_mt7688 +kmod-sound-soc-mt7628
   TITLE:=Support for es8388 codec
   KCONFIG:=CONFIG_SND_SOC_ES8388
   FILES:=\
 	$(LINUX_DIR)/sound/soc/codecs/snd-soc-es8388.ko
-  AUTOLOAD:=$(call AutoLoad,57,es8388)
+  AUTOLOAD:=$(call AutoLoad,57,es8388, snd-soc-mt7628-audio, snd-soc-mt7628-i2s)
   $(call AddDepends/sound)
 endef
 
@@ -108,4 +108,4 @@ define KernelPackage/sound-soc-mt7628/description
  Support for es8388 i2s codec 
 endef
 
-$(eval $(call KernelPackage,sound-soc-codec8388))
+$(eval $(call KernelPackage,sound-soc-es8388))

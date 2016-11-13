@@ -140,7 +140,6 @@ ramips_setup_interfaces()
 	mt7628 | \
 	mzk-w300nh2 | \
 	mzk-750dhp | \
-	vocore2 | \
 	whr-300hp2 | \
 	whr-600d | \
 	wsr-600 | \

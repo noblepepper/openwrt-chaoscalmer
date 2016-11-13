@@ -99,7 +99,6 @@ platform_check_image() {
 	ur-336un |\
 	v22rw-2x2 | \
 	vocore | \
-	vocore2 | \
 	w150m | \
 	w306r-v20 |\
 	w502u |\

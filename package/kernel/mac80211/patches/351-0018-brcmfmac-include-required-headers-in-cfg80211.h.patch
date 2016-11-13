@@ -10,16 +10,16 @@ Without this including cfg80211.h in a wrong order could result in:
 drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h:122:24: error: array type has incomplete element type
   struct brcmf_wsec_key key[BRCMF_MAX_DEFAULT_KEYS];
                         ^
-drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h:291:24: error: field ‘p2p’ has incomplete type
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h:291:24: error: field âp2pâ has incomplete type
   struct brcmf_p2p_info p2p;
                         ^
-drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h:297:27: error: field ‘pmk_list’ has incomplete type
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h:297:27: error: field âpmk_listâ has incomplete type
   struct brcmf_pmk_list_le pmk_list;
                            ^
-drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h:317:28: error: field ‘assoclist’ has incomplete type
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h:317:28: error: field âassoclistâ has incomplete type
   struct brcmf_assoclist_le assoclist;
 
-Signed-off-by: Rafał Miłecki <zajec5@gmail.com>
+Signed-off-by: RafaÅ MiÅecki <zajec5@gmail.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 ---
 

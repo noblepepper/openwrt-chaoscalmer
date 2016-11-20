@@ -149,7 +149,7 @@
 		};
 
 		gpio43 {
-			gpio-export,name = "gpio19";
+			gpio-export,name = "gpio43";
 			gpio-export,direction_may_change = <1>;
 			gpios = <&gpio1 11 0>;
 		};

@@ -1,6 +1,6 @@
-diff -Naru a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
---- a/sound/soc/codecs/Kconfig	2016-10-28 11:15:18.000000000 +0800
-+++ b/sound/soc/codecs/Kconfig	2016-09-03 12:27:04.000000000 +0800
+diff -Naur a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+--- a/sound/soc/codecs/Kconfig	2016-11-09 08:53:01.316951388 -0600
++++ b/sound/soc/codecs/Kconfig	2016-11-09 08:53:21.326942672 -0600
 @@ -414,6 +414,9 @@
  config SND_SOC_HDMI_CODEC
         tristate "HDMI stub CODEC"
@@ -11,9 +11,9 @@ diff -Naru a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
  config SND_SOC_ES8328
  	tristate "Everest Semi ES8328 CODEC"
  
-diff -Naru a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
---- a/sound/soc/codecs/Makefile	2016-10-28 11:15:24.000000000 +0800
-+++ b/sound/soc/codecs/Makefile	2016-09-03 12:26:56.000000000 +0800
+diff -Naur a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
+--- a/sound/soc/codecs/Makefile	2016-11-09 08:53:01.316951388 -0600
++++ b/sound/soc/codecs/Makefile	2016-11-09 08:53:21.326942672 -0600
 @@ -50,6 +50,7 @@
  snd-soc-da9055-objs := da9055.o
  snd-soc-bt-sco-objs := bt-sco.o
@@ -30,10 +30,10 @@ diff -Naru a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
  obj-$(CONFIG_SND_SOC_ES8328)	+= snd-soc-es8328.o
  obj-$(CONFIG_SND_SOC_ES8328_I2C)+= snd-soc-es8328-i2c.o
  obj-$(CONFIG_SND_SOC_ES8328_SPI)+= snd-soc-es8328-spi.o
-diff -Naru a/sound/soc/codecs/es8388.c b/sound/soc/codecs/es8388.c
---- a/sound/soc/codecs/es8388.c	1970-01-01 08:00:00.000000000 +0800
-+++ b/sound/soc/codecs/es8388.c	2016-10-28 11:12:55.000000000 +0800
-@@ -0,0 +1,219 @@
+diff -Naur a/sound/soc/codecs/es8388.c b/sound/soc/codecs/es8388.c
+--- a/sound/soc/codecs/es8388.c	1969-12-31 18:00:00.000000000 -0600
++++ b/sound/soc/codecs/es8388.c	2016-11-09 08:53:21.326942672 -0600
+@@ -0,0 +1,234 @@
 +#include <linux/module.h>
 +#include <linux/moduleparam.h>
 +#include <linux/init.h>
@@ -60,33 +60,48 @@ diff -Naru a/sound/soc/codecs/es8388.c b/sound/soc/codecs/es8388.c
 +{
 +	struct snd_soc_codec *codec = dai->codec;
 +
-+	if (dai->capture_active){
-+		// power on AD
-+		snd_soc_write(codec, 3, 0);
-+	}else{
-+		// power off AD
-+		snd_soc_write(codec, 3, 0xff);
-+	}
-+	if (dai->playback_active){
-+		// power on DA
-+		snd_soc_write(codec, 4, 0x3c);
-+	} else {
-+		// power off DA
-+		snd_soc_write(codec, 4, 0xc0);
-+	}
++    if(dai->capture_active){
++        // power on AD
++        snd_soc_write(codec, 3, 0);
++    }else{
++        // power off AD
++//        snd_soc_write(codec, 3, 0xff);
++    }
++    if(dai->playback_active){
++        // power on DA
++        snd_soc_write(codec, 4, 0x3c);
++    }else{
++        // power off DA
++//        snd_soc_write(codec, 4, 0xc0);
++    }
 +
-+	pr_info("es8388_hw_params: %d, AD: %d, DA: %d\n",
-+		params_width(params), dai->capture_active, dai->playback_active);
-+
++    pr_info("es8388_hw_params: %d, AD: %d, DA: %d\n",
++            params_width(params),
++            dai->capture_active,
++            dai->playback_active);
++//	switch (params_width(params)) {
++//	case 16:
++//		snd_soc_update_bits(codec, ES8388_ADC4, ES8388_ADC4_WL_MASK,
++//				    ES8388_ADC4_WL_16BIT);
++//		break;
++//	case 24:
++//		snd_soc_update_bits(codec, ES8388_ADC4, ES8388_ADC4_WL_MASK,
++//				    ES8388_ADC4_WL_24BIT);
++//		break;
++//	default:
++//		dev_err(codec->dev, "unsupported width %d\n",
++//			params_width(params));
++//		return -EINVAL;
++//	}
 +	return 0;
 +}
 +
 +static int es8388_mute(struct snd_soc_dai *dai, int mute)
 +{
-+	struct snd_soc_codec *codec = dai->codec;
-+	int reg = mute ? ES8388_CTRL3_DACMUTE : 0;
-+	snd_soc_update_bits(codec, ES8388_CTRL3, ES8388_CTRL3_DACMUTE, reg);
-+	pr_info("es8388_mute %d\n", mute);
++//	struct snd_soc_codec *codec = dai->codec;
++//	int reg = mute ? ES8388_CTRL3_DACMUTE : 0;
++//	snd_soc_update_bits(codec, ES8388_CTRL3, ES8388_CTRL3_DACMUTE, reg);
++    pr_info("es8388_mute %d\n", mute);
 +	return 0;
 +}
 +
@@ -102,14 +117,14 @@ diff -Naru a/sound/soc/codecs/es8388.c b/sound/soc/codecs/es8388.c
 +		.channels_min = 1,
 +		.channels_max = 2,
 +		.rates = SNDRV_PCM_RATE_8000_48000,
-+		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE,
++        .formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE,
 +	},
 +	.capture = {
 +		.stream_name = "Capture",
 +		.channels_min = 1,
 +		.channels_max = 2,
 +		.rates = SNDRV_PCM_RATE_8000_48000,
-+		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE,
++        .formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE,
 +	},
 +	.ops = &es8388_dai_ops,
 +	.symmetric_rates = 1,
@@ -135,42 +150,42 @@ diff -Naru a/sound/soc/codecs/es8388.c b/sound/soc/codecs/es8388.c
 +	snd_soc_write(codec, 0x00, 0x05);
 +	snd_soc_write(codec, 0x01, 0x40);
 +	snd_soc_write(codec, 0x02, 0x00);
-+	// AD and DA power on when ES8388 power on
-+	snd_soc_write(codec, 0x03, 0x0);
-+	snd_soc_write(codec, 0x04, 0x3c);
++    // AD and DA power on when ES8388 power on
++    snd_soc_write(codec, 0x03, 0x0);
++    snd_soc_write(codec, 0x04, 0x3c);
 +
-+	// slave mode
++    // slave mode
 +	snd_soc_write(codec, 0x08, 0x00);
 +
-+	// AD
-+	snd_soc_write(codec, 0x09, 0x44);   // power gain!
-+	// L use L2, R use R2
-+	// snd_soc_write(codec, 0x0a, 0x51);   // pin L2
-+	// snd_soc_write(codec, 0x0b, 0x88);   //
-+	// snd_soc_write(codec, 0x0a, 0xf4);   // differential
-+	snd_soc_write(codec, 0x0a, 0x04);   // L1
-+	snd_soc_write(codec, 0x0b, 0x80);   //
-+	snd_soc_write(codec, 0x0c, 0x4c);   // 16 bit, CLK,DAT,LRCLK use I2S format
-+	snd_soc_write(codec, 0x0d, 0x33);
++    // AD
++    snd_soc_write(codec, 0x09, 0x44);   // power gain!
++    // L use L2, R use R2
++    // snd_soc_write(codec, 0x0a, 0x51);   // pin L2
++    // snd_soc_write(codec, 0x0b, 0x88);   //
++    // snd_soc_write(codec, 0x0a, 0xf4);   // differential
++    snd_soc_write(codec, 0x0a, 0x04);   // L1
++    snd_soc_write(codec, 0x0b, 0x80);   //
++    snd_soc_write(codec, 0x0c, 0x4c);   // 16 bit, CLK,DAT,LRCLK use I2S format
++    snd_soc_write(codec, 0x0d, 0x33);
 +	snd_soc_write(codec, 0x0e, 0x00);
 +
-+	// snd_soc_write(codec, 0x10, 0xc0);
-+	// snd_soc_write(codec, 0x11, 0xc0);
-+	snd_soc_write(codec, 0x10, 0x00);   // L vol, 00 0dB, c0 -96dB
-+	snd_soc_write(codec, 0x11, 0x00);   // R vol, 00 0dB, c0 -96dB
-+	snd_soc_write(codec, 0x12, 0xe2);
++    //snd_soc_write(codec, 0x10, 0xc0);
++    // snd_soc_write(codec, 0x11, 0xc0);
++    snd_soc_write(codec, 0x10, 0x00);   // L vol, 00 0dB, c0 -96dB
++    snd_soc_write(codec, 0x11, 0x00);   // R vol, 00 0dB, c0 -96dB
++    snd_soc_write(codec, 0x12, 0xe2);
 +	snd_soc_write(codec, 0x13, 0xc0);
-+	snd_soc_write(codec, 0x14, 0x11);
++    snd_soc_write(codec, 0x14, 0x11);
 +	snd_soc_write(codec, 0x15, 0x06);
 +	snd_soc_write(codec, 0x16, 0xf3);
 +
-+	// DA
++    // DA
 +	snd_soc_write(codec, 0x17, 0x18);
-+	snd_soc_write(codec, 0x18, 0x33);
++    snd_soc_write(codec, 0x18, 0x33);
 +	snd_soc_write(codec, 0x19, 0x20);
 +	snd_soc_write(codec, 0x1a, 0x00);
 +	snd_soc_write(codec, 0x1b, 0x00);
-+	// L use L1, R use R1
++    // L use L1, R use R1
 +	snd_soc_write(codec, 0x26, 0x00);
 +	snd_soc_write(codec, 0x27, 0x80);
 +	snd_soc_write(codec, 0x2a, 0x80);
@@ -243,8 +258,8 @@ diff -Naru a/sound/soc/codecs/es8388.c b/sound/soc/codecs/es8388.c
 +		.name = "es8388",
 +		.of_match_table = es8388_ofs,
 +	},
-+	.probe = es8388_i2c_probe,
-+	.remove = es8388_i2c_remove,
++	.probe =    es8388_i2c_probe,
++	.remove =   es8388_i2c_remove,
 +	.id_table = es8388_i2c_id,
 +};
 +
@@ -253,9 +268,9 @@ diff -Naru a/sound/soc/codecs/es8388.c b/sound/soc/codecs/es8388.c
 +MODULE_DESCRIPTION("Audio codec ES8388 driver");
 +MODULE_AUTHOR("Qin Wei <me@vocore.io>");
 +MODULE_LICENSE("GPL");
-diff -Naru a/sound/soc/codecs/es8388.h b/sound/soc/codecs/es8388.h
---- a/sound/soc/codecs/es8388.h	1970-01-01 08:00:00.000000000 +0800
-+++ b/sound/soc/codecs/es8388.h	2016-09-02 10:53:02.000000000 +0800
+diff -Naur a/sound/soc/codecs/es8388.h b/sound/soc/codecs/es8388.h
+--- a/sound/soc/codecs/es8388.h	1969-12-31 18:00:00.000000000 -0600
++++ b/sound/soc/codecs/es8388.h	2016-11-09 08:53:21.326942672 -0600
 @@ -0,0 +1,40 @@
 +#ifndef _ES8388_H
 +#define _ES8388_H

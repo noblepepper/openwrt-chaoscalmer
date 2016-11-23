@@ -18,13 +18,22 @@ define Device/miwifi-nano
 endef
 TARGET_DEVICES += miwifi-nano
 
-define Device/vocore2
-  DTS := VOCORE2
+define Device/vocore2-64M
+  DTS := VOCORE2-64M
   IMAGE_SIZE := $(ralink_default_fw_size_16M)
   DEVICE_TITLE := Vocore VoCore 2
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-ledtrig-usbdev
 endef
-TARGET_DEVICES += vocore2
+TARGET_DEVICES += vocore2-64M
+
+
+define Device/vocore2-128M
+  DTS := VOCORE2-128M
+  IMAGE_SIZE := $(ralink_default_fw_size_16M)
+  DEVICE_TITLE := Vocore VoCore 2
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-ledtrig-usbdev
+endef
+TARGET_DEVICES += vocore2-128M
 
 define Device/wrtnode2p
   DTS := WRTNODE2P

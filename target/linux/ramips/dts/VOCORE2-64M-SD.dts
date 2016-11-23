@@ -1,0 +1,14 @@
+/dts-v1/;
+
+/include/ "VOCORE2.dtsi"
+
+/{
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x4000000>;
+	};
+	sdhci@10130000 {
+		mediatek,cd-poll;
+		status = "okay";
+	};
+};

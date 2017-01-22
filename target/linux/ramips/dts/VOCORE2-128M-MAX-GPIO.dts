@@ -1,0 +1,183 @@
+/dts-v1/;
+
+/include/ "mt7628an.dtsi"
+
+/ {
+	compatible = "VoCore2", "mediatek,mt7628an-soc";
+	model = "VoCore2";
+	
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x8000000>;
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		wifiled {
+			label = "VoCore2:pink:wifi";
+			gpios = <&gpio1 12 0>;
+		};
+	};
+
+	chosen {
+		bootargs = "console=ttyS0,115200";
+	};
+
+	pinctrl {
+		state_default: pinctrl0 {
+			spi_cs1 {
+				ralink,group = "spi cs1";
+				ralink,function = "gpio";
+			};
+
+			uartlite {
+				ralink,group = "uart0";
+				ralink,function = "gpio";
+			};
+
+			uart1 {
+				ralink,group = "uart1";
+				ralink,function = "gpio";
+			};
+
+			uart2 {
+				ralink,group = "uart2";
+				ralink,function = "gpio";
+			};
+
+			sdmode {
+				ralink,group = "sdmode";
+				ralink,function = "gpio";
+			};
+
+			pwm0 {
+				ralink,group = "pwm0";
+				ralink,function = "gpio";
+			};
+
+			pwm1 {
+				ralink,group = "pwm1";
+				ralink,function = "gpio";
+			};
+
+			i2s {
+				ralink,group = "i2s";
+				ralink,function = "gpio";
+			};
+
+			gpio0 {
+				ralink,group = "gpio";
+				ralink,function = "gpio";
+			};
+
+			wdt {
+				ralink,group = "wdt";
+				ralink,function = "gpio";
+			};
+
+			refclk {
+				ralink,group = "refclk";
+				ralink,function = "gpio";
+			};
+
+			agpio {
+				ralink,group = "agpio";
+				ralink,function = "uart2";
+			};
+
+			led4 {
+				ralink,group = "p4led_an";
+				ralink,function = "gpio";
+			};
+
+			led3 {
+				ralink,group = "p3led_an";
+				ralink,function = "gpio";
+			};
+
+			led2 {
+				ralink,group = "p2led_an";
+				ralink,function = "gpio";
+			};
+
+			led1 {
+				ralink,group = "p1led_an";
+				ralink,function = "gpio";
+			};
+
+			led0 {
+				ralink,group = "p0led_an";
+				ralink,function = "gpio";
+			};
+		};
+	};
+
+	palmbus@10000000 {
+		spi@b00 {
+			status = "okay";
+
+			m25p80@0 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+				compatible = "en25q64";
+				reg = <0 0>;
+				linux,modalias = "m25p80", "en25q64";
+				spi-max-frequency = <10000000>;
+				m25p,chunked-io = <32>;
+
+				partition@0 {
+					label = "u-boot";
+					reg = <0x0 0x30000>;
+					read-only;
+				};
+
+				partition@30000 {
+					label = "u-boot-env";
+					reg = <0x30000 0x10000>;
+				};
+
+				factory: partition@40000 {
+					label = "factory";
+					reg = <0x40000 0x10000>;
+					read-only;
+				};
+
+				partition@50000 {
+					label = "firmware";
+					reg = <0x50000 0xfb0000>;
+				};
+			};
+
+		};
+		i2s: i2s@a00 {
+			compatible = "mediatek,mt7628-i2s";
+			status = "disabled";
+		};
+		uartlite@c00 {
+			status = "disabled";
+		};
+		uart1@d00 {
+			status = "disabled";
+		};
+		uart2@e00 {
+			status = "okay";
+		};
+		gdma@2800 {
+			compatible = "mediatek,mt7628-gdma";
+			status = "okay";
+		};
+	};
+
+/*	i2c-gpio {
+		compatible = "i2c-gpio";
+
+		gpios = <&gpio0 5 0 &gpio0 4 0>;
+		i2c-gpio,delay-us = <5>;
+
+        };*/
+
+	sdhci@10130000 {
+		status = "disabled";
+	};
+};

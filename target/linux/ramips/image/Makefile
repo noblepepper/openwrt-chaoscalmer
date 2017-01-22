@@ -199,7 +199,6 @@ BuildFirmware/Tplink/initramfs=$(call BuildFirmware/OF/tplink/initramfs,$(1),$(2
 
 ralink_default_fw_size_16M=16121856
 BuildFirmware/Default16M/squashfs=$(call BuildFirmware/OF,$(1),$(2),$(3),$(ralink_default_fw_size_16M),$(4))
-#							squashfs, vocore2-64M, VOCORE2-
 BuildFirmware/Default16M/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(3),$(4))
 
 ralink_default_fw_size_32M=33226752
@@ -1015,12 +1014,14 @@ endef
 Image/Build/Profile/MT7628=$(call BuildFirmware/Default4M/$(1),$(1),mt7628,MT7628)
 Image/Build/Profile/VOCORE2-64M=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-64M,VOCORE2-64M)
 Image/Build/Profile/VOCORE2-128M=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-128M,VOCORE2-128M)
+Image/Build/Profile/VOCORE2-128M-MAX-GPIO=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-128M-max-gpio,VOCORE2-128M-MAX-GPIO)
 Image/Build/Profile/VOCORE2-64M-SD=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-64M-sd,VOCORE2-64M-SD)
 Image/Build/Profile/VOCORE2-128M-SD=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-128M-sd,VOCORE2-128M-SD)
 
 define Image/Build/Profile/VOCORE2
 	$(call Image/Build/Profile/VOCORE2-64M,$(1))
 	$(call Image/Build/Profile/VOCORE2-128M,$(1))
+	$(call Image/Build/Profile/VOCORE2-128M-MAX-GPIO,$(1))
 	$(call Image/Build/Profile/VOCORE2-64M-SD,$(1))
 	$(call Image/Build/Profile/VOCORE2-128M-SD,$(1))
 endef
@@ -1030,6 +1031,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/MT7628,$(1))
         $(call Image/Build/Profile/VOCORE2-64M,$(1))
         $(call Image/Build/Profile/VOCORE2-128M,$(1))
+	$(call Image/Build/Profile/VOCORE2-128M-MAX-GPIO,$(1))
 	$(call Image/Build/Profile/VOCORE2-64M-SD,$(1))
 	$(call Image/Build/Profile/VOCORE2-128M-SD,$(1))
 endef

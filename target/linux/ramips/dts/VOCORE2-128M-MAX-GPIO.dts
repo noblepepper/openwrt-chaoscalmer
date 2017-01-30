@@ -167,6 +167,9 @@
 			compatible = "mediatek,mt7628-gdma";
 			status = "okay";
 		};
+		i2c@900 {
+			status = "okay";
+		};
 	};
 
 /*	i2c-gpio {

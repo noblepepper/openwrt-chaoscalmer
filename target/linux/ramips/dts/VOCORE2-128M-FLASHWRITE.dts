@@ -1,0 +1,31 @@
+/dts-v1/;
+
+/include/ "VOCORE2.dtsi"
+/{
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x8000000>;
+	};
+	sdhci@10130000 {
+		mediatek,cd-poll;
+		status = "okay";
+	};
+	palmbus@10000000 {
+		spi@b00 {
+			m25p80@0 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+				compatible = "en25q64";
+				reg = <0 1>;
+				linux,modalias = "m25p80", "en25q64";
+				spi-max-frequency = <10000000>;
+				m25p,chunked-io = <32>;
+
+				partition@0 {
+					label = "emptyflash";
+					reg = <0x00000 0x1000000>;
+				};
+			};
+		};
+	};
+};

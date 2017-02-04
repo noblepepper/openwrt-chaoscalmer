@@ -35,6 +35,14 @@ define Device/vocore2-128M-max-gpio
 endef
 TARGET_DEVICES += vocore2-128M
 
+define Device/vocore2-128M-flashwrite
+  DTS := VOCORE2-128M-FLASHWRITE
+  IMAGE_SIZE := $(ralink_default_fw_size_16M)
+  DEVICE_TITLE := Vocore VoCore 2
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-ledtrig-usbdev python-mini
+endef
+TARGET_DEVICES += vocore2-128M
+
 define Device/vocore2-128M
   DTS := VOCORE2-128M
   IMAGE_SIZE := $(ralink_default_fw_size_16M)

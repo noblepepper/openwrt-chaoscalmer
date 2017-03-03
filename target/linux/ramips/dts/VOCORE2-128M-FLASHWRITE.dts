@@ -12,18 +12,37 @@
 	};
 	palmbus@10000000 {
 		spi@b00 {
+			/*spidev@1 {
+				compatible = "linux,spidev";
+				spi-max-frequency = <10000000>;
+				reg = <1 0>;
+			};*/
 			m25p80@1 {
 				#address-cells = <1>;
 				#size-cells = <1>;
-				compatible = "en25q64";
+				compatible = "w25q128";
 				reg = <1 0>;
-				linux,modalias = "m25p80", "en25q64";
+				linux,modalias = "m25p80", "w25q128";
 				spi-max-frequency = <10000000>;
 				m25p,chunked-io = <32>;
 
-				partition@0 {
+				partition0@0 {
 					label = "emptyflash";
-					reg = <0x00000 0x1000000>;
+					reg = <0x00000 0x2000000>;
+				};
+				partition@0 {
+					label = "empty-u-boot";
+					reg = <0x0 0x30000>;
+				};
+
+				partition@30000 {
+					label = "empty-u-boot-env";
+					reg = <0x30000 0x10000>;
+				};
+
+				partition@40000 {
+					label = "empty-firmware";
+					reg = <0x50000 0x1fb0000>;
 				};
 			};
 		};

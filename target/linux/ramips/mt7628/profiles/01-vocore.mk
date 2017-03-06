@@ -5,8 +5,8 @@
 # See /LICENSE for more information.
 #
 
-define Profile/VOCORE2-BETA
-	NAME:=VoCore2-beta
+define Profile/VOCORE2-128M
+	NAME:=VoCore2
 	PACKAGES:=\
 		kmod-usb-core kmod-usb2 kmod-usb-ohci \
 		kmod-ledtrig-usbdev \
@@ -24,11 +24,35 @@ define Profile/VOCORE2-BETA
 
 endef
 
-
-define Profile/VOCORE2-BETA/Description
-	Package set for Vocore2 beta single board model with 64M ram
+define Profile/VOCORE2-128M/Description
+	Package set for Vocore2 release single board model or AirPlay 
+	model with 128MB ram
 endef
-$(eval $(call Profile,VOCORE2-BETA))
+$(eval $(call Profile,VOCORE2-128M))
+
+define Profile/VOCORE2-128M-SD	
+	NAME:=VoCore2-Ultimate
+	PACKAGES:=\
+		kmod-usb-core kmod-usb2 kmod-usb-ohci \
+		kmod-ledtrig-usbdev \
+	  	gdbserver curl strace coreutils coreutils-stty \
+		avahi-nodbus-daemon mountd mjpg-streamer \
+		uhttpd rpcd rpcd-mod-iwinfo git git-http samba36-server \
+		luci luci-theme-openwrt luci-app-mjpg-streamer luci-app-samba luci-lib-json \
+		rpcd-mod-rpcsys cgi-io spi-tools uboot-envtools \
+		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
+		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
+		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
+		kmod-sdhci-mt7620 kmod-usb-storage \
+		kmod-video-core kmod-video-uvc \
+		mtk-sdk-wifi tcpdump-mini
+
+endef
+
+define Profile/VOCORE2-128M-SD/Description
+	Package set for Vocore2 release ultimate model with 128M ram and SD slot
+endef
+$(eval $(call Profile,VOCORE2-128M-SD))
 
 define Profile/VOCORE2-LITE
 	NAME:=VoCore2-lite
@@ -57,8 +81,8 @@ endef
 
 $(eval $(call Profile,VOCORE2-LITE))
 
-define Profile/VOCORE2-128M
-	NAME:=VoCore2
+define Profile/VOCORE2-BETA
+	NAME:=VoCore2-beta
 	PACKAGES:=\
 		kmod-usb-core kmod-usb2 kmod-usb-ohci \
 		kmod-ledtrig-usbdev \
@@ -76,35 +100,11 @@ define Profile/VOCORE2-128M
 
 endef
 
-define Profile/VOCORE2-128M/Description
-	Package set for Vocore2 release single board model or AirPlay 
-	model with 128MB ram
+define Profile/VOCORE2-BETA/Description
+	Package set for Vocore2 beta single board model with 64M ram
 endef
-$(eval $(call Profile,VOCORE2-128M))
+$(eval $(call Profile,VOCORE2-BETA))
 
-define Profile/VOCORE2-128M-SD	
-	NAME:=VoCore2-Ulitimate
-	PACKAGES:=\
-		kmod-usb-core kmod-usb2 kmod-usb-ohci \
-		kmod-ledtrig-usbdev \
-	  	gdbserver curl strace coreutils coreutils-stty \
-		avahi-nodbus-daemon mountd mjpg-streamer \
-		uhttpd rpcd rpcd-mod-iwinfo git git-http samba36-server \
-		luci luci-theme-openwrt luci-app-mjpg-streamer luci-app-samba luci-lib-json \
-		rpcd-mod-rpcsys cgi-io spi-tools uboot-envtools \
-		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
-		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
-		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
-		kmod-sdhci-mt7620 kmod-usb-storage \
-		kmod-video-core kmod-video-uvc \
-		mtk-sdk-wifi tcpdump-mini
-
-endef
-
-define Profile/VOCORE2-128M-SD/Description
-	Package set for Vocore2 release ultimate model with 128M ram and SD slot
-endef
-$(eval $(call Profile,VOCORE2-128M-SD))
 
 define Profile/VOCORE2-128M-SPIDEV
 	NAME:=VoCore2-128M-Spidev

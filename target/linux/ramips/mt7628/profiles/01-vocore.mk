@@ -155,3 +155,28 @@ define Profile/VOCORE2-128M-FLASHWRITE/Description
 	With second flash chip connected to chip select 1
 endef
 $(eval $(call Profile,VOCORE2-128M-FLASHWRITE))
+
+define Profile/VOCORE2-128M-MAX-GPIO
+	NAME:=VoCore2-128M-Max-Gpio
+	PACKAGES:=\
+		kmod-usb-core kmod-usb2 kmod-usb-ohci \
+		kmod-ledtrig-usbdev \
+		gdbserver curl strace coreutils coreutils-stty \
+		avahi-nodbus-daemon mountd mjpg-streamer \
+		uhttpd rpcd rpcd-mod-iwinfo git git-http samba36-server \
+		luci luci-theme-openwrt luci-app-mjpg-streamer luci-app-samba luci-lib-json \
+		rpcd-mod-rpcsys cgi-io spi-tools uboot-envtools \
+		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
+		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
+		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
+		kmod-usb-storage \
+		kmod-video-core kmod-video-uvc \
+		mtk-sdk-wifi tcpdump-mini
+
+endef
+
+define Profile/VOCORE2-128M-MAX-GPIO/Description
+	Package set for Vocore2 release model with 128M ram
+	All gpios available for use except i2c pins
+endef
+$(eval $(call Profile,VOCORE2-128M-MAX-GPIO))

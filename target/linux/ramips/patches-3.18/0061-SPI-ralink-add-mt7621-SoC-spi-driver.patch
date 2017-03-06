@@ -25,13 +25,13 @@
  obj-$(CONFIG_SPI_OC_TINY)		+= spi-oc-tiny.o
 --- /dev/null
 +++ b/drivers/spi/spi-mt7621.c
-@@ -0,0 +1,394 @@
+@@ -0,0 +1,583 @@
 +/*
 + * spi-mt7621.c -- MediaTek MT7621 SPI controller driver
 + *
 + * Copyright (C) 2011 Sergiy <piratfm@gmail.com>
 + * Copyright (C) 2011-2013 Gabor Juhos <juhosg@openwrt.org>
-+ * Copyright (C) 2014-2015 Felix Fietkau <nbd@openwrt.org>
++ * Copyright (C) 2014-2015 Felix Fietkau <nbd@nbd.name>
 + *
 + * Some parts are based on spi-orion.c:
 + *   Author: Shadi Ammouri <shadi@marvell.com>
@@ -113,12 +113,18 @@
 +	iowrite32(val, rs->base + reg);
 +}
 +
-+static void mt7621_spi_reset(struct mt7621_spi *rs)
++static void mt7621_spi_reset(struct mt7621_spi *rs, int duplex)
 +{
 +	u32 master = mt7621_spi_read(rs, MT7621_SPI_MASTER);
 +
 +	master |= 7 << 29;
 +	master |= 1 << 2;
++	//if (duplex)
++	//	master |= 1 << 10;
++	//else
++	//	master &= ~(1 << 10);
++	
++	//Only half duplex works properly!
 +	master &= ~(1 << 10);
 +
 +	mt7621_spi_write(rs, MT7621_SPI_MASTER, master);
@@ -130,7 +136,7 @@
 +	int cs = spi->chip_select;
 +	u32 polar = 0;
 +
-+        mt7621_spi_reset(rs);
++        mt7621_spi_reset(rs, cs);
 +	if (enable)
 +		polar = BIT(cs);
 +	mt7621_spi_write(rs, MT7621_SPI_POLAR, polar);
@@ -217,10 +223,9 @@
 +
 +	list_for_each_entry(t, &m->transfers, transfer_list) {
 +		const u8 *buf = t->tx_buf;
-+		int rlen = t->len;
 +
 +		if (t->rx_buf)
-+			rx_len += rlen;
++			rx_len += t->len;
 +
 +		if (!buf)
 +			continue;
@@ -228,12 +233,12 @@
 +		if (t->speed_hz < speed)
 +			speed = t->speed_hz;
 +
-+		if (WARN_ON(len + rlen > 36)) {
++		if (WARN_ON(len + t->len > 36)) {
 +			status = -EIO;
 +			goto msg_done;
 +		}
 +
-+		for (i = 0; i < rlen; i++, len++)
++		for (i = 0; i < t->len; i++, len++)
 +			data[len / 4] |= buf[i] << (8 * (len & 3));
 +	}
 +
@@ -292,12 +297,196 @@
 +	return 0;
 +}
 +
++
++#define MT7621_MAX_TX_BUFFER	36		//Dont change, limited by hardware!
++#define MT7621_MAX_RX_BUFFER	32		//Dont change, limited by hardware!
++
++
++/**
++ * Write a single byte to a buffer
++ */
++static int mt7621_spi_write_buffer(struct mt7621_spi *rs, int regindex, u32 buf, int bytesused)
++{
++	//We need to write our TX data to the OPCODE register properly
++	if(regindex == 0){
++		buf = swab32(buf);
++		if (bytesused < 4)
++			buf >>= (4 - bytesused) * 8;
++	}
++	mt7621_spi_write(rs, MT7621_SPI_OPCODE+(regindex*4), buf);
++
++	return 0;
++}
++
++/**
++ * Simple write function
++ * Due to a bug in the silicon of the MT76XX, the MSB of the SPI transmission
++ * needs to be in the "CMD" section aka in the "OPCODE" registers
++ */
++static int mt7621_spi_transmit(struct spi_device *spi, struct mt7621_spi *rs, const u8 *buf, int len)
++{
++	int i, regindex; 
++	u32 tmp, val; 
++
++	//Too long for us to send
++	if(len > MT7621_MAX_TX_BUFFER) {return -1;}  
++
++	//Write all data to the buffer
++	regindex = 0;
++	tmp = 0;
++	for(i = 0; i < len; i++){
++		tmp |= buf[i] << (8 * (i & 3));
++
++		if(i % 4 == 3){
++			mt7621_spi_write_buffer(rs, regindex, tmp, len);
++			regindex++;
++			tmp = 0;
++		}
++	}
++	if(len%4 != 0)
++		mt7621_spi_write_buffer(rs, regindex, tmp, len);
++
++	//Set how many bits should be written
++	val = (min_t(int, len, 4) * 8) << 24;
++	if (len > 4)
++		val |= (len - 4) * 8;
++	mt7621_spi_write(rs, MT7621_SPI_MOREBUF, val);
++
++	//Do actual transmission
++	val = mt7621_spi_read(rs, MT7621_SPI_TRANS);
++	val |= SPI_CTL_START;
++	mt7621_spi_write(rs, MT7621_SPI_TRANS, val);
++
++	mt7621_spi_wait_till_ready(spi);
++
++	return 0;
++}
++
++static int mt7621_spi_receive(struct spi_device *spi, struct mt7621_spi *rs, u8 *buf, int len)
++{
++	int i; 
++	u32 tmp, val; 
++
++	//Too long for us to send
++	if(len > MT7621_MAX_RX_BUFFER) {return -1;} 
++
++	//Set how many bits should be read
++
++	val = (len * 8) << 12;
++	//val |= len * 8;
++	mt7621_spi_write(rs, MT7621_SPI_MOREBUF, val);
++
++	//Do actual transmission
++	val = mt7621_spi_read(rs, MT7621_SPI_TRANS);
++	val |= SPI_CTL_START;
++	mt7621_spi_write(rs, MT7621_SPI_TRANS, val);
++
++	mt7621_spi_wait_till_ready(spi);
++
++	//Read the buffer of the SPI module
++	for (i = 0; i < len; i+=4)
++	{
++		tmp = mt7621_spi_read(rs, MT7621_SPI_DATA0 + i);
++
++		//Yes this could be optimized - Anyone?
++		buf[i+0] = (tmp >> 0) & 0xFF;
++		if(i+1 < len) buf[i+1] = (tmp >> 8) & 0xFF;
++		if(i+2 < len) buf[i+2] = (tmp >> 16) & 0xFF; 
++		if(i+3 < len) buf[i+3] = (tmp >> 24) & 0xFF;
++
++		//printk(KERN_INFO "RX Tmp: %08x %02x\n", tmp, buf[i]);
++	}
++/*
++	for (i = 0; i < 8; i++)
++	{
++		tmp = mt7621_spi_read(rs, MT7621_SPI_DATA0 + i);
++		printk(KERN_INFO "RX %i: %08x\n", i, tmp);
++	}
++	*/
++	
++	return 0;		
++}
++
++
++/* 
++ * The SPI core of the MT76xx is utterly broken,
++ * and a full duplex transfer will mess up the MSB of the transaction
++ * by setting it to the MSB-1 bit aka a 0x40 will be a 0xC0
++ * this means, that "real" full duplex SPI cannot be used
++ *
++ * As most drivers (also the driver we use), only does 
++ * "quasi-full-duplex" aka. one transfer in and one transfer out
++ * this function will handle this just fine 
++ */
++static int mt7621_spi_transfer_full_duplex(struct spi_master *master,
++					   struct spi_message *m)
++{
++	struct mt7621_spi *rs = spi_master_get_devdata(master);
++	struct spi_device *spi = m->spi;
++	struct spi_transfer *t = NULL;
++	unsigned int speed = spi->max_speed_hz;
++	int status = 0;
++	int i;
++
++	//Wait until SPI is ready from last transfer
++	mt7621_spi_wait_till_ready(spi);
++
++	//Get the minimum speed for the transmission
++	list_for_each_entry(t, &m->transfers, transfer_list) {
++		if(t->speed_hz < speed){speed = t->speed_hz;}
++	}
++
++	if (mt7621_spi_prepare(spi, speed)) {
++		return -1;
++	}
++
++	m->actual_length = 0;
++
++	mt7621_spi_set_cs(spi, 1);
++
++	//Go trough all transfers
++	list_for_each_entry(t, &m->transfers, transfer_list) {
++		//We don't support full duplex
++		//but in most cases, this is not necessary anyay
++		if(t->tx_buf && t->rx_buf){
++			printk(KERN_ERR "The MT7621-SPI does not support full bidirectional SPI, only doing TX!");
++			//There are ways to overcome this limitation partially, but no really clean solution
++		}
++		
++		if(t->tx_buf) {			
++			const u8 *buf = t->tx_buf; 
++			//printk(KERN_INFO "Doing TX");
++			m->actual_length += t->len;
++
++			for(i = 0; i < t->len; i+=MT7621_MAX_TX_BUFFER)
++				mt7621_spi_transmit(spi, rs, buf+i, min_t(int, t->len-i, MT7621_MAX_TX_BUFFER));
++		}
++		else if(t->rx_buf) {
++			u8 *buf = t->rx_buf; 
++			//printk(KERN_INFO "Doing RX");
++			m->actual_length += t->len;
++			for(i = 0; i < t->len; i+=MT7621_MAX_RX_BUFFER)
++				mt7621_spi_receive(spi, rs, buf+i, min_t(int, t->len-i, MT7621_MAX_RX_BUFFER));
++		}
++		//We don't transfer if we neither got read or write buffer, is that ok?!
++	}
++
++	mt7621_spi_set_cs(spi, 0);
++
++	m->status = status;
++	spi_finalize_current_message(master);
++
++	return 0;
++}
++
 +static int mt7621_spi_transfer_one_message(struct spi_master *master,
 +					   struct spi_message *m)
 +{
 +	struct spi_device *spi = m->spi;
 +	int cs = spi->chip_select;
 +
++	if (cs)
++		return mt7621_spi_transfer_full_duplex(master, m);
 +	return mt7621_spi_transfer_half_duplex(master, m);
 +}
 +
@@ -367,7 +556,7 @@
 +
 +	master->setup = mt7621_spi_setup;
 +	master->transfer_one_message = mt7621_spi_transfer_one_message;
-+	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(8, 16);
++	master->bits_per_word_mask = SPI_BPW_MASK(8);
 +	master->dev.of_node = pdev->dev.of_node;
 +	master->num_chipselect = 2;
 +
@@ -384,7 +573,7 @@
 +
 +	device_reset(&pdev->dev);
 +
-+	mt7621_spi_reset(rs);
++	mt7621_spi_reset(rs, 0);
 +
 +	return spi_register_master(master);
 +}
@@ -418,5 +607,5 @@
 +module_platform_driver(mt7621_spi_driver);
 +
 +MODULE_DESCRIPTION("MT7621 SPI driver");
-+MODULE_AUTHOR("Felix Fietkau <nbd@openwrt.org>");
++MODULE_AUTHOR("Felix Fietkau <nbd@nbd.name>");
 +MODULE_LICENSE("GPL");

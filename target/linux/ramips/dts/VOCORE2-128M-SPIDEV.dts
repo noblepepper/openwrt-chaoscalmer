@@ -10,4 +10,13 @@
 		mediatek,cd-poll;
 		status = "okay";
 	};
+	palmbus@10000000 {
+		spi@b00 {
+			spidev@1 {
+				compatible = "linux,spidev";
+				spi-max-frequency = <10000000>;
+				reg = <1 0>;
+			};
+		};
+	};
 };

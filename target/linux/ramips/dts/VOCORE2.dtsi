@@ -221,7 +221,7 @@
 		codec-dai-name = "es8388-hifi";
 	};
 	sdhci@10130000 {
-	/*	mediatek,cd-poll;	*/
+		mediatek,cd-poll;
 		status = "okay";
 	};
 };

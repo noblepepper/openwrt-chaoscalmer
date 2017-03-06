@@ -12,11 +12,6 @@
 	};
 	palmbus@10000000 {
 		spi@b00 {
-			/*spidev@1 {
-				compatible = "linux,spidev";
-				spi-max-frequency = <10000000>;
-				reg = <1 0>;
-			};*/
 			m25p80@1 {
 				#address-cells = <1>;
 				#size-cells = <1>;
@@ -41,6 +36,10 @@
 				};
 
 				partition@40000 {
+					label = "empty-factory";
+					reg = <0x40000 0x10000>;
+				};
+				partition@50000 {
 					label = "empty-firmware";
 					reg = <0x50000 0x1fb0000>;
 				};

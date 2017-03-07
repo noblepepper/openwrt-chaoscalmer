@@ -18,7 +18,7 @@ define Profile/VOCORE2-128M
 		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
 		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
 		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
-		kmod-usb-storage \
+		kmod-usb-storage kmod-fs-ext4 block-mount \
 		kmod-video-core kmod-video-uvc \
 		mtk-sdk-wifi tcpdump-mini
 
@@ -43,7 +43,7 @@ define Profile/VOCORE2-128M-SD
 		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
 		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
 		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
-		kmod-sdhci-mt7620 kmod-usb-storage \
+		kmod-sdhci-mt7620 kmod-usb-storage kmod-fs-ext4 block-mount \
 		kmod-video-core kmod-video-uvc \
 		mtk-sdk-wifi tcpdump-mini
 
@@ -67,7 +67,7 @@ define Profile/VOCORE2-LITE
 		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
 		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
 		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
-		kmod-usb-storage \
+		kmod-usb-storage kmod-fs-ext4 block-mount \
 		kmod-video-core kmod-video-uvc \
 		mtk-sdk-wifi tcpdump-mini
 
@@ -94,7 +94,7 @@ define Profile/VOCORE2-BETA
 		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
 		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
 		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
-		kmod-usb-storage \
+		kmod-usb-storage kmod-fs-ext4 block-mount \
 		kmod-video-core kmod-video-uvc \
 		mtk-sdk-wifi tcpdump-mini
 
@@ -119,9 +119,9 @@ define Profile/VOCORE2-128M-SPIDEV
 		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
 		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
 		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
-		kmod-usb-storage kmod-spi-dev \
+		kmod-usb-storage kmod-spi-dev kmod-fs-ext4 block-mount \
 		kmod-video-core kmod-video-uvc \
-		mtk-sdk-wifi tcpdump-mini
+		mtk-sdk-wifi tcpdump-mini flashrom
 
 endef
 
@@ -144,7 +144,7 @@ define Profile/VOCORE2-128M-FLASHWRITE
 		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
 		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
 		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
-		kmod-usb-storage \
+		kmod-usb-storage kmod-fs-ext4 block-mount \
 		kmod-video-core kmod-video-uvc \
 		mtk-sdk-wifi tcpdump-mini
 
@@ -169,7 +169,7 @@ define Profile/VOCORE2-128M-MAX-GPIO
 		kmod-fs-vfat kmod-fs-exfat kmod-i2c-core kmod-i2c-ralink \
 		kmod-nls-base kmod-nls-cp437 kmod-nls-iso8859-1 \
 		kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-utf8 \
-		kmod-usb-storage \
+		kmod-usb-storage  kmod-fs-ext4 block-mount\
 		kmod-video-core kmod-video-uvc \
 		mtk-sdk-wifi tcpdump-mini
 

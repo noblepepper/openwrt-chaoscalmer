@@ -1013,7 +1013,7 @@ endef
 
 Image/Build/Profile/MT7628=$(call BuildFirmware/Default4M/$(1),$(1),mt7628,MT7628)
 Image/Build/Profile/VOCORE2-128M=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-128M,VOCORE2-128M)
-Image/Build/Profile/VOCORE2-128M-ULTIMATE=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-128M,VOCORE2-128M)
+Image/Build/Profile/VOCORE2-128M-ULTIMATE=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-128M-ultimate,VOCORE2-128M)
 Image/Build/Profile/VOCORE2-128M-FLASHWRITE=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-128M-flashwrite,VOCORE2-128M-FLASHWRITE)
 Image/Build/Profile/VOCORE2-128M-SPIDEV=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-128M-spidev,VOCORE2-128M-SPIDEV)
 Image/Build/Profile/VOCORE2-128M-MAX-GPIO=$(call BuildFirmware/Default16M/$(1),$(1),vocore2-128M-max-gpio,VOCORE2-128M-MAX-GPIO)
@@ -1030,7 +1030,7 @@ define Image/Build/Profile/VOCORE2
 endef
 
 define Image/Build/Profile/VOCORE2-ULTIMATE
-	$(call Image/Build/Profile/VOCORE2-128M,$(1))
+	$(call Image/Build/Profile/VOCORE2-128M-ULTIMATE,$(1))
 endef
 
 define Image/Build/Profile/VOCORE2-BETA

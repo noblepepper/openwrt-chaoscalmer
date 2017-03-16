@@ -30,7 +30,7 @@ define Profile/VOCORE2-128M/Description
 endef
 $(eval $(call Profile,VOCORE2-128M))
 
-define Profile/VOCORE2-128M-SD	
+define Profile/VOCORE2-128M-ULTIMATE	
 	NAME:=VoCore2-Ultimate
 	PACKAGES:=\
 		kmod-usb-core kmod-usb2 kmod-usb-ohci \
@@ -49,10 +49,10 @@ define Profile/VOCORE2-128M-SD
 
 endef
 
-define Profile/VOCORE2-128M-SD/Description
+define Profile/VOCORE2-128-ULTIMATE/Description
 	Package set for Vocore2 release ultimate model with 128M ram and SD slot
 endef
-$(eval $(call Profile,VOCORE2-128M-SD))
+$(eval $(call Profile,VOCORE2-128M-ULTIMATE))
 
 define Profile/VOCORE2-LITE
 	NAME:=VoCore2-lite
